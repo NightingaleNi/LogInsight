@@ -1,0 +1,21 @@
+.claude
+# packaging noise
+dist/
+build/
+*.egg-info/
+# caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+# venvs
+.venv/
+venv/
+env/
+# os
+.DS_Store
+# editors
+.vscode/
+.idea/
+# docs (keep root guide tracked):
+AGENTS.md
+CLAUDE.md

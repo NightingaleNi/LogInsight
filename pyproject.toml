@@ -1,0 +1,10 @@
+[project]
+name = "loginsight"
+version = "0.0.1"
+description = "Tiny CLI for quick log insights"
+requires-python = ">=3.9"
+authors = [{name="Nightingale Ni"}]
+
+[project.scripts]
+loginsight = "loginsight.cli:main"
+
