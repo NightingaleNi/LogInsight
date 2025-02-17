@@ -1,0 +1,7 @@
+2025-01-03 10:11:12 INFO server started on :8080
+2025-01-03 10:11:15 WARN slow query took 432ms user=12
+2025-01-03 10:11:16 ERROR failed to connect to db: timeout
+2025-01-03 11:01:02 INFO health check ok
+2025-01-03 12:22:32 INFO user login id=42
+2025-01-03 12:22:49 WARN retrying request id=req-abc
+2025-01-03 12:22:55 ERROR write to socket: broken pipe
