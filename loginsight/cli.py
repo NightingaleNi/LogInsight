@@ -1,6 +1,7 @@
 import argparse
 import sys
 from .core import scan_logs, summarize_buckets
+from .anomaly import detect_spikes
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -18,6 +19,7 @@ def _build_parser() -> argparse.ArgumentParser:
     summ.add_argument("--bucket", choices=["minute", "hour", "day"], default="hour")
     summ.add_argument("--limit", type=int, default=0)
     summ.add_argument("--json", action="store_true")
+    summ.add_argument("--spikes", action="store_true", help="Highlight spikes via simple z-score")
 
     return p
 
@@ -30,6 +32,8 @@ def main(argv=None) -> int:
         res = scan_logs(args.path, pattern=args.pattern, limit=args.limit)
     elif args.cmd == "summary":
         res = summarize_buckets(args.path, bucket=args.bucket, limit=args.limit)
+        if args.spikes:
+            res["spikes"] = detect_spikes(res.get("counts", {}))
     else:
         raise SystemExit(2)
 
@@ -45,4 +49,3 @@ def main(argv=None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

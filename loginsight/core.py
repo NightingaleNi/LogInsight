@@ -23,6 +23,7 @@ def _iter_lines(path: str, limit: int = 0) -> Iterable[str]:
 
 
 def _parse_ts_prefix(line: str) -> Optional[datetime]:
+    # try full ISO first (with timezone omitted) then relaxed forms
     head = line[:19]
     for fmt in TS_FORMATS:
         try:
