@@ -17,8 +17,8 @@ Planned features
 
 Usage (planned)
 - `python -m loginsight scan path/to/log --pattern ERROR`
-- `python -m loginsight summary path/to/log --bucket hour`
+- `python -m loginsight summary path/to/log --bucket hour --spikes`
 
 Notes
 - This repo mimics a real solo workflow with incremental commits.
-
+- See `scripts/sample.log` to try commands locally without setup.
