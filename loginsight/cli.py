@@ -13,6 +13,7 @@ def _build_parser() -> argparse.ArgumentParser:
     scan.add_argument("--pattern", default=None, help="Substring to match (case sensitive)")
     scan.add_argument("--limit", type=int, default=0, help="Max lines to process (0=all)")
     scan.add_argument("--json", action="store_true", help="Output JSON")
+    scan.add_argument("--top", type=int, default=10, help="Number of top messages to show")
 
     summ = sub.add_parser("summary", help="Summarize counts by time bucket")
     summ.add_argument("path", help="Path to log file")
@@ -30,6 +31,8 @@ def main(argv=None) -> int:
 
     if args.cmd == "scan":
         res = scan_logs(args.path, pattern=args.pattern, limit=args.limit)
+        if "top_messages" in res and args.top:
+            res["top_messages"] = dict(list(res["top_messages"].items())[: args.top])
     elif args.cmd == "summary":
         res = summarize_buckets(args.path, bucket=args.bucket, limit=args.limit)
         if args.spikes:
