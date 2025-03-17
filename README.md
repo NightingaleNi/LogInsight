@@ -17,6 +17,7 @@ Planned features
 
 Usage (planned)
 - `python -m loginsight scan path/to/log --pattern ERROR`
+- `python -m loginsight scan path/to/log --pattern "^\\d{4}-\\d{2}-\\d{2}.*ERROR" --regex`
 - `python -m loginsight summary path/to/log --bucket hour --spikes`
 
 Notes
