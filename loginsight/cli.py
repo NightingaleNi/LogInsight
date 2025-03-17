@@ -11,6 +11,7 @@ def _build_parser() -> argparse.ArgumentParser:
     scan = sub.add_parser("scan", help="Scan logs for pattern counts")
     scan.add_argument("path", help="Path to log file")
     scan.add_argument("--pattern", default=None, help="Substring to match (case sensitive)")
+    scan.add_argument("--regex", action="store_true", help="Treat pattern as regular expression")
     scan.add_argument("--limit", type=int, default=0, help="Max lines to process (0=all)")
     scan.add_argument("--json", action="store_true", help="Output JSON")
     scan.add_argument("--top", type=int, default=10, help="Number of top messages to show")
@@ -30,7 +31,7 @@ def main(argv=None) -> int:
     args = _build_parser().parse_args(argv)
 
     if args.cmd == "scan":
-        res = scan_logs(args.path, pattern=args.pattern, limit=args.limit)
+        res = scan_logs(args.path, pattern=args.pattern, limit=args.limit, regex=args.regex)
         if "top_messages" in res and args.top:
             res["top_messages"] = dict(list(res["top_messages"].items())[: args.top])
     elif args.cmd == "summary":

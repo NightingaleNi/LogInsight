@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections import Counter, defaultdict
 from datetime import datetime
 from typing import Dict, Iterable, Optional
+import re
 from .parse import guess_level
 
 TS_FORMATS = [
@@ -33,15 +34,27 @@ def _parse_ts_prefix(line: str) -> Optional[datetime]:
     return None
 
 
-def scan_logs(path: str, pattern: Optional[str] = None, limit: int = 0) -> Dict[str, object]:
+def scan_logs(
+    path: str,
+    pattern: Optional[str] = None,
+    limit: int = 0,
+    regex: bool = False,
+) -> Dict[str, object]:
     total = 0
     matched = 0
     levels = Counter()
     top_msgs = Counter()
 
+    rx = re.compile(pattern) if (regex and pattern) else None
     for line in _iter_lines(path, limit=limit):
         total += 1
-        if pattern and pattern not in line:
+        if pattern:
+            if rx is not None:
+                if not rx.search(line):
+                    continue
+            else:
+                if pattern not in line:
+                    continue
             continue
         matched += 1
         levels[guess_level(line)] += 1
