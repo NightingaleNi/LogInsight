@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Dict, Iterable, Optional
 import re
 from .parse import guess_level
+from .files import expand_inputs
 
 TS_FORMATS = [
     "%Y-%m-%d %H:%M:%S",
@@ -46,19 +47,19 @@ def scan_logs(
     top_msgs = Counter()
 
     rx = re.compile(pattern) if (regex and pattern) else None
-    for line in _iter_lines(path, limit=limit):
-        total += 1
-        if pattern:
-            if rx is not None:
-                if not rx.search(line):
-                    continue
-            else:
-                if pattern not in line:
-                    continue
-            continue
-        matched += 1
-        levels[guess_level(line)] += 1
-        top_msgs[line[-160:]] += 1
+    for p in expand_inputs(path):
+        for line in _iter_lines(p, limit=limit):
+            total += 1
+            if pattern:
+                if rx is not None:
+                    if not rx.search(line):
+                        continue
+                else:
+                    if pattern not in line:
+                        continue
+            matched += 1
+            levels[guess_level(line)] += 1
+            top_msgs[line[-160:]] += 1
 
     return {
         "total_lines": total,
@@ -71,18 +72,19 @@ def scan_logs(
 def summarize_buckets(path: str, bucket: str = "hour", limit: int = 0) -> Dict[str, object]:
     buckets = defaultdict(int)
     total_ts = 0
-    for line in _iter_lines(path, limit=limit):
-        ts = _parse_ts_prefix(line)
-        if not ts:
-            continue
-        total_ts += 1
-        if bucket == "minute":
-            key = ts.strftime("%Y-%m-%d %H:%M")
-        elif bucket == "day":
-            key = ts.strftime("%Y-%m-%d")
-        else:
-            key = ts.strftime("%Y-%m-%d %H:00")
-        buckets[key] += 1
+    for p in expand_inputs(path):
+        for line in _iter_lines(p, limit=limit):
+            ts = _parse_ts_prefix(line)
+            if not ts:
+                continue
+            total_ts += 1
+            if bucket == "minute":
+                key = ts.strftime("%Y-%m-%d %H:%M")
+            elif bucket == "day":
+                key = ts.strftime("%Y-%m-%d")
+            else:
+                key = ts.strftime("%Y-%m-%d %H:00")
+            buckets[key] += 1
 
     ordered = dict(sorted(buckets.items()))
     return {"bucket": bucket, "sampled_lines": total_ts, "counts": ordered}
